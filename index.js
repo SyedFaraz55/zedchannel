@@ -22,6 +22,8 @@ mongoose
   .catch((err) => console.log("failed to connect to db"));
 app.use(morgan("tiny"));
 
+const PORT = process.env.PORT || 9000
+
 app.get("/", async (req, res) => {
   return res.status(200).json({ ok: true, message: "Server health is good" });
 });
@@ -173,4 +175,4 @@ app.get("/get-teams",async(req,res) => {
   res.status(200).json({ok:true,data:results})
 })
 
-app.listen(9000, () => console.log("@server listening at 9000"));
+app.listen(PORT, () => console.log(`@server listening at ${PORT}`));
