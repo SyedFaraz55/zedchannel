@@ -11,15 +11,27 @@ const morgan = require("morgan");
 const Enquiry = require("./Schema/Enquiry");
 const promo = require("./Schema/Promotions");
 const Team = require("./Schema/Team");
+const Animal = require("./Schema/Animal");
+const Person = require("./Schema/Person");
 const upload = multer({ dest: "uploads/" });
+const helmet = require("helmet");
+const { logger } = require("./logger");
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directves:{
+      'script-src':['self']
+    }
+  }
+}))
 app.use(bodyParser({ extended: true }));
 app.use(cors())
 mongoose
   .connect(
-    "mongodb+srv://syed55:developer@cluster0.vqo8p.mongodb.net/zednews?retryWrites=true&w=majority"
+    "mongodb+srv://syed55df:developer@cluster0.vqo8p.mongodb.net/zednews?retryWrites=true&w=majority"
   )
-  .then((_) => console.log("connected"))
-  .catch((err) => console.log("failed to connect to db"));
+  .then((_) => logger.info("Connected to DB"))
+  .catch((err) => logger.error("failed to connect to db"));
 app.use(morgan("tiny"));
 
 const PORT = process.env.PORT || 9000
@@ -174,5 +186,19 @@ app.get("/get-teams",async(req,res) => {
   const results = await Team.find({});
   res.status(200).json({ok:true,data:results})
 })
+
+app.delete("/delete-team/:id",async(req,res) => {
+  const results = await Team.deleteOne({_id:req.params.id});
+  if(results.deletedCount > 0) {
+
+  res.status(200).json({ok:true,data:results})
+  }else {
+
+  res.status(200).json({ok:false,data:results})
+  }
+})
+
+
+
 
 app.listen(PORT, () => console.log(`@server listening at ${PORT}`));
